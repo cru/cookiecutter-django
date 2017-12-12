@@ -176,7 +176,7 @@ TEMPLATES = [
 ]
 
 # See: http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # STATIC FILE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -299,7 +299,6 @@ INSTALLED_APPS += [
     'django_tables2', 
     'easy_select2', 
     'django_twilio', 
-    'easy_formsets_bootstrap',
     'floppyforms', 
     'djangobower',
 ]
@@ -321,20 +320,10 @@ BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 BOWER_INSTALLED_APPS = [
-    'bootstrap#3.3.7',
-    'bootstrap3-dialog#1.35.4',
-    'css-toggle-switch#4.1.0',
+    'bootstrap#v4.0.0-alpha.6',
     'html5shiv#3.7.3',
     'jquery#3.2.1',
     'popper#1.11.0'
-    'js-cookie#2.2.0',
-    'jstzdetect#1.0.6',
-    'jszip#3.1.5',
-    'kendo-ui#2017.3.1206',
-    'modernizr#3.5.0',
-    'normalize-css#7.0.0',
-    'pako#1.0.6',
-    'string-format-js#1.0.0',
 ]
 
 LOGFILE_DIR = os.path.join(BASE_DIR, "logs")
