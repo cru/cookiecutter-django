@@ -36,6 +36,13 @@ To run all tests using various versions of python in virtualenvs defined in tox.
 
     $ tox
 
+Note: When using pyenv, set python globals. (ie: pyenv global <python version 1> <python version 2> ... ::
+
+    $ pyenv global 3.5.4 3.4.7
+
+Note: When using pyenv first run.::
+    $ tox
+
 It is possible to tests with some versions of python, to do this the command
 is::
 
