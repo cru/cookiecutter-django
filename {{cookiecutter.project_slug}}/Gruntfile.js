@@ -5,11 +5,11 @@ module.exports = function (grunt) {
   // Load grunt tasks automatically
   // see: https://github.com/sindresorhus/load-grunt-tasks
   require('load-grunt-tasks')(grunt);
-
+    
   // Time how long tasks take. Can help when optimizing build times
   // see: https://npmjs.org/package/time-grunt
   require('time-grunt')(grunt);
-
+    
   var pathsConfig = function (appName) {
     this.app = appName || appConfig.name;
 
@@ -21,15 +21,16 @@ module.exports = function (grunt) {
       fonts: this.app + '/static/fonts',
       images: this.app + '/static/images',
       js: this.app + '/static/js',
-      manageScript: 'manage.py',
+      manageScript:
+        'manage.py',
     }
   };
-
+    
   grunt.initConfig({
-
+    
     paths: pathsConfig(),
     pkg: appConfig,
-
+    
     // see: https://github.com/gruntjs/grunt-contrib-watch
     watch: {
       gruntfile: {
@@ -47,7 +48,7 @@ module.exports = function (grunt) {
           '<%= paths.js %>/**/*.js',
           '<%= paths.sass %>/**/*.{scss,sass}',
           '<%= paths.app %>/**/*.html'
-          ],
+        ],
         options: {
           spawn: false,
           livereload: true,
@@ -55,84 +56,89 @@ module.exports = function (grunt) {
       },
     },
 
-    // see: https://github.com/sindresorhus/grunt-sass
-    sass: {
-      dev: {
+    copy: {
+      dist: {
+        expand: true,
+        cwd: 'bower_components/font-awesome/fonts/',
+        src: '**',
+        dest: '<%= paths.fonts %>',
+        flaten: true,
+        filter: 'isFile',
+      }
+    },
+      // see: https://github.com/sindresorhus/grunt-sass
+      sass: {
+        dev: {
           options: {
-              outputStyle: 'nested',
-{% if cookiecutter.custom_bootstrap_compilation == 'y' %}
-              includePaths: ['bower_components/bootstrap-sass/assets/stylesheets/bootstrap/'],
-{% endif %}
+            outputStyle: 'nested',
+              includePaths: ['bower_components/bootstrap/scss/',
+                             'bower_components/font-awesome/scss/',
+                             'bower_components/font-awesome/fonts/'],
               sourceMap: false,
               precision: 10
           },
           files: {
-              '<%= paths.css %>/project.css': '<%= paths.sass %>/project.scss'
+            '<%= paths.css %>/project.css': '<%= paths.sass %>/project.scss'
           },
-      },
-      dist: {
+        },
+        dist: {
           options: {
-              outputStyle: 'compressed',
-{% if cookiecutter.custom_bootstrap_compilation == 'y' %}
-              includePaths: ['bower_components/bootstrap-sass/assets/stylesheets/bootstrap/'],
-{% endif %}
-              sourceMap: false,
-              precision: 10
+            outputStyle: 'compressed',
+            includePaths: ['bower_components/bootstrap/scss/'],
+            sourceMap: false,
+            precision: 10
           },
           files: {
-              '<%= paths.css %>/project.css': '<%= paths.sass %>/project.scss'
+            '<%= paths.css %>/project.css': '<%= paths.sass %>/project.scss'
           },
+        }
+      },
+
+      //see https://github.com/nDmitry/grunt-postcss
+      postcss: {
+        options: {
+          map: true, // inline sourcemaps
+
+          processors: [ require('pixrem')(), // add fallbacks for rem units
+            require('autoprefixer-core')({browsers: [
+              'Android 2.3',
+              'Android >= 4',
+              'Chrome >= 20',
+              'Firefox >= 24',
+              'Explorer >= 8',
+              'iOS >= 6',
+              'Opera >= 12',
+              'Safari >= 6'
+            ]}),
+            // add vendor prefixes
+            require('cssnano')() // minify the result
+          ]
+        },
+        dist: {
+          src: '<%= paths.css %>/*.css'
+        }
+      },
+
+      // see: https://npmjs.org/package/grunt-bg-shell
+      bgShell: {
+        _defaults: {
+          bg: true
+        },
+        runDjango: {
+          cmd: 'python <%= paths.manageScript %>
+          runserver'
+        },
       }
-    },
-
-    //see https://github.com/nDmitry/grunt-postcss
-    postcss: {
-      options: {
-        map: true, // inline sourcemaps
-
-        processors: [
-          require('pixrem')(), // add fallbacks for rem units
-          require('autoprefixer-core')({browsers: [
-            'Android 2.3',
-            'Android >= 4',
-            'Chrome >= 20',
-            'Firefox >= 24',
-            'Explorer >= 8',
-            'iOS >= 6',
-            'Opera >= 12',
-            'Safari >= 6'
-          ]}), // add vendor prefixes
-          require('cssnano')() // minify the result
-        ]
-      },
-      dist: {
-        src: '<%= paths.css %>/*.css'
-      }
-    },
-
-    // see: https://npmjs.org/package/grunt-bg-shell
-    bgShell: {
-      _defaults: {
-        bg: true
-      },
-      runDjango: {
-        cmd: 'python <%= paths.manageScript %> runserver'
-      },
-      {% if cookiecutter.use_mailhog == "y" and cookiecutter.use_docker == 'n' -%}runMailHog: {
-        cmd: './mailhog'
-      },{%- endif %}
-    }
   });
 
   grunt.registerTask('serve', [
-    {% if cookiecutter.use_mailhog == "y" and cookiecutter.use_docker == 'n' -%}
-    'bgShell:runMailHog',
-    {%- endif %}
+    'copy',
     'bgShell:runDjango',
     'watch'
   ]);
 
   grunt.registerTask('build', [
+    'copy',
     'sass:dist',
     'postcss'
   ]);

@@ -284,3 +284,50 @@ ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
+LOGFILE_DIR = os.path.join(BASE_DIR, "logs")
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
+            },
+        },
+    'handlers': {
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGFILE_DIR, "debug.log"),
+            'formatter': 'standard',
+            },
+        'users': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGFILE_DIR, "users.log"),
+            'formatter': 'standard',
+            },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True
+            }
+        },
+    'loggers': {
+        'django': {
+            'handlers': ['file',],
+            'level': 'WARNING',
+            'propagate': True,
+            },
+        'users.views': {
+            'handlers': ['users','mail_admins'],
+            'level': 'WARNING',
+            'propagate': True,
+            },
+        'users.models': {
+            'handlers': ['users','mail_admins'],
+            'level': 'WARNING',
+            'propagate': True,
+            },
+        },
+    }
