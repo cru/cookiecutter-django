@@ -20,6 +20,7 @@ services:
     ports:
       - "8000:8000"
     command: /start.sh
+    container_name: {{cookiecutter.project_slug}}_django
 
   postgres:
     build:
@@ -30,15 +31,20 @@ services:
       - postgres_backup_local:/backups
     environment:
       - POSTGRES_USER={{cookiecutter.project_slug}}
+    ports:
+      - "5432:5432"
+    container_name: {{cookiecutter.project_slug}}_postgres
 {% if cookiecutter.use_mailhog == 'y' %}
   mailhog:
     image: mailhog/mailhog:v1.0.0
     ports:
       - "8025:8025"
+    container_name: {{cookiecutter.project_slug}}_mailhog
 {% endif %}
 {% if cookiecutter.use_celery == 'y' %}
   redis:
     image: redis:3.0
+    container_name: {{cookiecutter.project_slug}}_redis
 
   celeryworker:
     # https://github.com/docker/compose/issues/3220
@@ -49,6 +55,7 @@ services:
       - mailhog{% endif %}
     ports: []
     command: /start-celeryworker.sh
+    container_name: {{cookiecutter.project_slug}}_celeryworker
 
   celerybeat:
     # https://github.com/docker/compose/issues/3220
@@ -59,4 +66,5 @@ services:
       - mailhog{% endif %}
     ports: []
     command: /start-celerybeat.sh
+    container_name: {{cookiecutter.project_slug}}_celerybeat
 {% endif %}

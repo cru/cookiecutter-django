@@ -226,3 +226,9 @@ pip-selfcheck.json
 # to 'run' anything within it since any particular cookiecutter
 # is declarative by nature.
 .idea/
+
+
+.DS_Store
+logs/
+data_files/
+ssh_keys/

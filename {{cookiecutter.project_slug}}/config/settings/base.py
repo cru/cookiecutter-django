@@ -111,7 +111,7 @@ MANAGERS = ADMINS
 # Uses django-environ to accept uri format
 # See: https://django-environ.readthedocs.io/en/latest/#supported-types
 DATABASES = {
-    default': env.db('DATABASE_URL', default='postgres://{% if cookiecutter.windows == 'y' %}localhost{% endif %}/{{cookiecutter.project_slug}}'),
+    'default': env.db('DATABASE_URL', default='postgres://{% if cookiecutter.windows == 'y' %}localhost{% endif %}/{{cookiecutter.project_slug}}'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
@@ -176,7 +176,7 @@ TEMPLATES = [
 ]
 
 # See: http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # STATIC FILE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -290,16 +290,16 @@ ADMIN_URL = r'^admin/'
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
 INSTALLED_APPS += [
-    'django_js_reverse',  
+    'django_js_reverse',
     'rest_framework',
     'guardian',
     'django_filters',
     'easyaudit',
-    'reversion', 
-    'django_tables2', 
-    'easy_select2', 
-    'django_twilio', 
-    'floppyforms', 
+    'reversion',
+    'django_tables2',
+    'easy_select2',
+    'django_twilio',
+    'floppyforms',
     'djangobower',
 ]
 
@@ -318,12 +318,21 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-
 BOWER_INSTALLED_APPS = [
-    'bootstrap#v4.0.0-alpha.6',
+    'bootstrap#3.3.7',
+    'bootstrap3-dialog#1.35.4',
+    'css-toggle-switch#4.1.0',
     'html5shiv#3.7.3',
     'jquery#3.2.1',
-    'popper#1.11.0'
+    'popper.js#1.11.0',
+    'js-cookie#2.2.0',
+    'jstzdetect#1.0.6',
+    'jszip#3.1.5',
+    'kendo-ui#2017.3.1206',
+    'modernizr#3.5.0',
+    'normalize-css#7.0.0',
+    'pako#1.0.6',
+    'string-format-js#1.0.0',
 ]
 
 LOGFILE_DIR = os.path.join(BASE_DIR, "logs")
