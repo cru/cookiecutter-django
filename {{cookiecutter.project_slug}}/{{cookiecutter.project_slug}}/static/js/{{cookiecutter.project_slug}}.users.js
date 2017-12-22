@@ -1,4 +1,4 @@
-{{cookiecutter.project_slug}}.Base.User = (function ($) {
+{{cookiecutter.project_slug|title}}.Base.User = (function ($) {
     var options = {
         Debug: false,
     }

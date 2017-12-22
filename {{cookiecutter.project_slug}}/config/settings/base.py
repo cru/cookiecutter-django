@@ -285,7 +285,7 @@ STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
 {%- endif %}
 
 # Location of root django.contrib.admin URL, use {% raw %}{% url 'admin:index' %}{% endraw %}
-ADMIN_URL = r'^admin/'
+ADMIN_URL = env('DJANGO_ADMIN_URL', default=r'^admin/')
 
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
@@ -301,6 +301,7 @@ INSTALLED_APPS += [
     'django_twilio',
     'floppyforms',
     'djangobower',
+    'axes',
 ]
 
 AUTHENTICATION_BACKENDS += ['guardian.backends.ObjectPermissionBackend', ]
@@ -313,6 +314,7 @@ MIDDLEWARE += [
 STATICFILES_FINDERS += ['djangobower.finders.BowerFinder',]
 
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -328,14 +330,55 @@ BOWER_INSTALLED_APPS = [
     'js-cookie#2.2.0',
     'jstzdetect#1.0.6',
     'jszip#3.1.5',
-    'kendo-ui#2017.3.1206',
+    'https://bower.telerik.com/bower-kendo-ui.git#2017.3.1206',
     'modernizr#3.5.0',
     'normalize-css#7.0.0',
     'pako#1.0.6',
-    'string-format-js#1.0.0',
 ]
 
-LOGFILE_DIR = os.path.join(BASE_DIR, "logs")
+JS_REVERSE_SCRIPT_PREFIX = '/js_reverse/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
+}
+
+TWO_FACTOR_SMS_GATEWAY = 'two_factor.gateways.twilio.gateway.Twilio'
+TWO_FACTOR_CALL_GATEWAY = 'two_factor.gateways.twilio.gateway.Twilio'
+TWILIO_ACCOUNT_SID = env('DJANGO_TWILIO_ACCOUNT_SID', default='')
+TWILIO_AUTH_TOKEN = env('DJANGO_TWILIO_AUTH_TOKEN', default='')
+TWILIO_CALLER_ID = env('DJANGO_TWILIO_CALLER_ID', default='')
+
+OPENEXCHANGE_APP_ID = env('DJANGO_OPENEXCHANGE_APP_ID', default='')
+CURRENCIES = ('CAD', 'USD', 'EUR', 'AUD', 'GBP', )
+
+
+AUTH_PASSWORD_VALIDATORS[next(index for (index, d) in enumerate(AUTH_PASSWORD_VALIDATORS) if d["NAME"] == "django.contrib.auth.password_validation.MinimumLengthValidator")]['OPTIONS'] = { 'min_length': 10,}
+AUTH_PASSWORD_VALIDATORS += [
+    {
+        'NAME': 'accounts.password_validation.MaximumLengthValidator',
+    },
+    {
+        'NAME': 'accounts.password_validation.RequiredCharacterValidator',
+    },
+    {
+        'NAME': 'accounts.password_validation.InvalidCharacterValidator',
+    },
+]
+
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 1800
+SESSION_SAVE_EVERY_REQUEST = True
+AXES_LOGIN_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = timedelta(minutes=15)
+AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True
+PASSWORD_HISTORY_COUNT = 5
+# Defaults to 60 days.
+PASSWORD_DURATION_SECONDS = 60 * 86400
+
+
+LOGFILE_DIR = env('DJANGO_LOGFILE_DIR', default=os.path.join(BASE_DIR, "logs"))
+LOGGING_LEVEL = env('DJANGO_LOGGING_LEVEL', default='WARNING')
 
 LOGGING = {
     'version': 1,
@@ -347,13 +390,13 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'WARNING',
+            'level': LOGGING_LEVEL,
             'class': 'logging.FileHandler',
             'filename': os.path.join(LOGFILE_DIR, "debug.log"),
             'formatter': 'standard',
         },
         'users': {
-            'level': 'WARNING',
+            'level': LOGGING_LEVEL,
             'class': 'logging.FileHandler',
             'filename': os.path.join(LOGFILE_DIR, "users.log"),
             'formatter': 'standard',
@@ -367,17 +410,17 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file',],
-            'level': 'WARNING',
+            'level': LOGGING_LEVEL,
             'propagate': True,
         },
         'users.views': {
             'handlers': ['users','mail_admins'],
-            'level': 'WARNING',
+            'level': LOGGING_LEVEL,
             'propagate': True,
         },
         'users.models': {
             'handlers': ['users','mail_admins'],
-            'level': 'WARNING',
+            'level': LOGGING_LEVEL,
             'propagate': True,
         },
     },

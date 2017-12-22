@@ -4,7 +4,9 @@ ENV PYTHONUNBUFFERED 1
 
 # Requirements have to be pulled and installed here, otherwise caching won't work
 COPY ./requirements /requirements
-COPY netrc ~/.netrc
+COPY netrc /root/.netrc
+RUN chmod 0600 ~/.netrc
+
 RUN apt-get update -y && apt-get upgrade -y
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
 RUN apt-get install --yes nodejs

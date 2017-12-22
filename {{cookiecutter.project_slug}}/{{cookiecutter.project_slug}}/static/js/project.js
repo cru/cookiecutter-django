@@ -60,9 +60,9 @@ jQuery(document).ajaxSend(function (event, xhr, settings) {
 });
 
 
-var {{cookiecutter.project_slug}} = {};
+var {{cookiecutter.project_slug|title}} = {};
 
-{{cookiecutter.project_slug}}.Base = (function ($) {
+{{cookiecutter.project_slug|title}}.Base = (function ($) {
     var options = {
         Debug: false,
     }
